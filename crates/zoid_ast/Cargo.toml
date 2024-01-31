@@ -1,0 +1,10 @@
+[package]
+name = "zoid_ast"
+description = "Zoid Language Abstract Syntax Tree"
+authors = ["Jacob Evans <jacob@jwevans.dev>"]
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]

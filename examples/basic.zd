@@ -1,0 +1,10 @@
+// A main function that returns a 32 bit signed integer
+fn main(): i32 {
+    // Declare two variables and perform some math
+    let a = 42;
+    let b = a * 2 + 57;
+
+    // Return a value from main. This will be used to infer the types of
+    // the variables a and b. This also shows basic grouping.
+    return (b - 57) / 2;
+}

@@ -1,0 +1,16 @@
+[package]
+name = "zoidc"
+description = "Zoid Language Compiler"
+authors = ["Jacob Evans <jacob@jwevans.dev>"]
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { version = "4.4.18", features = ["derive", "wrap_help"] }
+
+zoid_lexer = { path = "../zoid_lexer" }
+zoid_parser = { path = "../zoid_parser" }
+zoid_lowering = { path = "../zoid_lowering" }
+zoid_codegen_llvm = { path = "../zoid_codegen_llvm" }
