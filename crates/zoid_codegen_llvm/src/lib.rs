@@ -10,15 +10,13 @@ pub use llvm_sys as llvm;
 use llvm::{
     analysis::{LLVMVerifierFailureAction, LLVMVerifyFunction, LLVMVerifyModule},
     core::{
-        LLVMAddFunction, LLVMAppendBasicBlockInContext, LLVMBuildAdd, LLVMBuildAlloca,
-        LLVMBuildBinOp, LLVMBuildFAdd, LLVMBuildFDiv, LLVMBuildFMul, LLVMBuildFSub, LLVMBuildLoad2,
-        LLVMBuildMul, LLVMBuildRet, LLVMBuildRetVoid, LLVMBuildSDiv, LLVMBuildSRem, LLVMBuildStore,
-        LLVMBuildSub, LLVMBuildUDiv, LLVMBuildURem, LLVMConstIntOfString, LLVMConstRealOfString,
-        LLVMContextCreate, LLVMCreateBuilderInContext, LLVMDoubleTypeInContext, LLVMDumpModule,
-        LLVMFloatTypeInContext, LLVMFunctionType, LLVMGetTarget, LLVMInt128TypeInContext,
-        LLVMInt16TypeInContext, LLVMInt32TypeInContext, LLVMInt64TypeInContext,
-        LLVMInt8TypeInContext, LLVMModuleCreateWithNameInContext, LLVMPositionBuilderAtEnd,
-        LLVMSetTarget, LLVMVoidTypeInContext,
+        LLVMAddFunction, LLVMAppendBasicBlockInContext, LLVMBuildAlloca, LLVMBuildBinOp,
+        LLVMBuildLoad2, LLVMBuildRet, LLVMBuildRetVoid, LLVMBuildStore, LLVMConstIntOfString,
+        LLVMConstRealOfString, LLVMContextCreate, LLVMCreateBuilderInContext,
+        LLVMDoubleTypeInContext, LLVMDumpModule, LLVMFloatTypeInContext, LLVMFunctionType,
+        LLVMGetTarget, LLVMInt128TypeInContext, LLVMInt16TypeInContext, LLVMInt32TypeInContext,
+        LLVMInt64TypeInContext, LLVMInt8TypeInContext, LLVMModuleCreateWithNameInContext,
+        LLVMPositionBuilderAtEnd, LLVMSetTarget, LLVMVoidTypeInContext,
     },
     prelude::{LLVMBuilderRef, LLVMContextRef, LLVMModuleRef, LLVMTypeRef, LLVMValueRef},
     target::{
@@ -139,9 +137,9 @@ impl<'source> ZoidCodeGenContext<'source> {
         };
 
         let opts = unsafe { LLVMCreatePassBuilderOptions() };
-        let passes = CString::new("constmerge").unwrap();
+        let passes = CString::new("constmerge,instcombine").unwrap();
 
-        let err = unsafe { LLVMRunPasses(self.module, passes.as_ptr(), tm, opts) };
+        let _err = unsafe { LLVMRunPasses(self.module, passes.as_ptr(), tm, opts) };
     }
 
     pub fn codegen(&mut self) {
@@ -294,7 +292,7 @@ impl<'source> ZoidCodeGenContext<'source> {
             _ => false,
         };
 
-        let opcode = self.codegen_binary_operator(op, is_signed, is_float, lhs, rhs);
+        let opcode = self.codegen_binary_operator(op, is_signed, is_float);
 
         unsafe { LLVMBuildBinOp(self.builder, opcode, lhs, rhs, c"binop".as_ptr()) }
     }
@@ -304,8 +302,6 @@ impl<'source> ZoidCodeGenContext<'source> {
         op: HLIRBinaryOperator,
         is_signed: bool,
         is_float: bool,
-        lhs: LLVMValueRef,
-        rhs: LLVMValueRef,
     ) -> LLVMOpcode {
         return if is_float {
             match op {
@@ -336,49 +332,5 @@ impl<'source> ZoidCodeGenContext<'source> {
                 }
             }
         };
-
-        // if is_float {
-        //     match op {
-        //         HLIRBinaryOperator::Add => unsafe {
-        //             LLVMBuildFAdd(self.builder, lhs, rhs, c"bin_add".as_ptr())
-        //         },
-        //         HLIRBinaryOperator::Sub => unsafe {
-        //             LLVMBuildFSub(self.builder, lhs, rhs, c"bin_sub".as_ptr())
-        //         },
-        //         HLIRBinaryOperator::Mul => unsafe {
-        //             LLVMBuildFMul(self.builder, lhs, rhs, c"bin_mul".as_ptr())
-        //         },
-        //         HLIRBinaryOperator::Div => unsafe {
-        //             LLVMBuildFDiv(self.builder, lhs, rhs, c"bin_div".as_ptr())
-        //         },
-        //         _ => panic!("Invalid binary operator for floating point"),
-        //     }
-        // } else {
-        //     match op {
-        //         HLIRBinaryOperator::Add => unsafe {
-        //             LLVMBuildAdd(self.builder, lhs, rhs, c"bin_add".as_ptr())
-        //         },
-        //         HLIRBinaryOperator::Sub => unsafe {
-        //             LLVMBuildSub(self.builder, lhs, rhs, c"bin_sub".as_ptr())
-        //         },
-        //         HLIRBinaryOperator::Mul => unsafe {
-        //             LLVMBuildMul(self.builder, lhs, rhs, c"bin_mul".as_ptr())
-        //         },
-        //         HLIRBinaryOperator::Div => {
-        //             if is_signed {
-        //                 unsafe { LLVMBuildSDiv(self.builder, lhs, rhs, c"bin_div".as_ptr()) }
-        //             } else {
-        //                 unsafe { LLVMBuildUDiv(self.builder, lhs, rhs, c"bin_div".as_ptr()) }
-        //             }
-        //         }
-        //         HLIRBinaryOperator::Rem => {
-        //             if is_signed {
-        //                 unsafe { LLVMBuildSRem(self.builder, lhs, rhs, c"bin_rem".as_ptr()) }
-        //             } else {
-        //                 unsafe { LLVMBuildURem(self.builder, lhs, rhs, c"bin_rem".as_ptr()) }
-        //             }
-        //         }
-        //     }
-        // }
     }
 }
