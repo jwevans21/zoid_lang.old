@@ -1,3 +1,3 @@
 [workspace]
 resolver = "2"
-members = [ "crates/zoid_ast", "crates/zoid_codegen_llvm", "crates/zoid_hlir","crates/zoid_lexer", "crates/zoid_lowering", "crates/zoid_parser", "crates/zoidc"]
+members = ["crates/zoid_lexer", "crates/zoid_location"]

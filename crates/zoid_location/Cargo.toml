@@ -1,7 +1,5 @@
 [package]
-name = "zoid_hlir"
-description = "Zoid Language High Level Intermediate Representation"
-authors = ["Jacob Evans <jacob@jwevans.dev>"]
+name = "zoid_location"
 version = "0.1.0"
 edition = "2021"
 
