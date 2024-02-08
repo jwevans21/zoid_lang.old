@@ -1,0 +1,3 @@
+[submodule "tree-sitter-zoid"]
+	path = tree-sitter-zoid
+	url = git@github.com:jwevans21/tree-sitter-zoid.git

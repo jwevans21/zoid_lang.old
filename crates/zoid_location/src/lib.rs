@@ -60,3 +60,70 @@ impl<'fname> ZoidLocation<'fname> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn init() -> ZoidLocation<'static> {
+        ZoidLocation {
+            file_name: "test",
+            line: 1,
+            column: 1,
+            start: 0,
+            end: 0,
+        }
+    }
+
+    #[test]
+    fn new_range() {
+        let loc = init();
+
+        assert_eq!(loc.new_range(20..50), ZoidLocation {
+            file_name: "test",
+            line: 1,
+            column: 1,
+            start: 20,
+            end: 50,
+        })
+    }
+
+    #[test]
+    fn extend_range() {
+        let loc = init();
+
+        assert_eq!(loc.extend_range(20), ZoidLocation {
+            file_name: "test",
+            line: 1,
+            column: 1,
+            start: 0,
+            end: 20,
+        })
+    }
+
+    #[test]
+    fn new_line() {
+        let loc = init();
+
+        assert_eq!(loc.new_line(20), ZoidLocation {
+            file_name: "test",
+            line: 20,
+            column: 1,
+            start: 0,
+            end: 0,
+        })
+    }
+
+    #[test]
+    fn new_col() {
+        let loc = init();
+
+        assert_eq!(loc.new_col(20), ZoidLocation {
+            file_name: "test",
+            line: 1,
+            column: 20,
+            start: 0,
+            end: 0,
+        })
+    }
+}
