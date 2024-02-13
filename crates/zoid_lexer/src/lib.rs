@@ -174,6 +174,16 @@ impl<'source, 'fname> ZoidLexer<'source, 'fname> {
                 }
                 _ => ZoidTokenKind::OpDot,
             },
+            'c' => match self.peek_char() {
+                Some('"') => todo!("C String Literal"),
+                _ => self.consume_identifier(&start),
+            },
+            'r' => match self.peek_char() {
+                Some('#') => todo!("Raw String Literal"),
+                _ => self.consume_identifier(&start),
+            },
+            // TODO: Implement Unicode XID
+            'a'..='z' | 'A'..='Z' | '_' => self.consume_identifier(&start),
             _ => return Err(String::from("Unknown Character in Input")),
         };
 
@@ -212,6 +222,16 @@ impl<'source, 'fname> ZoidLexer<'source, 'fname> {
             } else {
                 break;
             }
+        }
+    }
+
+    fn consume_identifier(&mut self, start: &ZoidLocation) -> ZoidTokenKind {
+        while let Some('a'..='z' | 'A'..='Z' | '_' | '0'..='9') = self.peek_char() {
+            self.next_char();
+        }
+
+        match self.input[start.start..self.location.end] {
+            _ => ZoidTokenKind::Identifier,
         }
     }
 }

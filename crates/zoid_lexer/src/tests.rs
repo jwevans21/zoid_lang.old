@@ -332,3 +332,62 @@ fn operators() {
 
     assert_eq!(lexer.tokenize(), Ok(None));
 }
+
+#[test]
+fn identifiers() {
+    let fname = "test_identifiers";
+    let input = "a abc _a __ _ a_090_";
+
+    let mut lexer = ZoidLexer::new(input, fname);
+    let base_loc = ZoidLocation {
+        file_name: fname,
+        line: 1,
+        column: 1,
+        start: 0,
+        end: 0,
+    };
+
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_range(0..1),
+            kind: ZoidTokenKind::Identifier,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_range(2..5).new_col(3),
+            kind: ZoidTokenKind::Identifier,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_range(6..8).new_col(7),
+            kind: ZoidTokenKind::Identifier,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_range(9..11).new_col(10),
+            kind: ZoidTokenKind::Identifier,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_range(12..13).new_col(13),
+            kind: ZoidTokenKind::Identifier,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_range(14..20).new_col(15),
+            kind: ZoidTokenKind::Identifier,
+        }))
+    );
+    assert_eq!(lexer.tokenize(), Ok(None));
+}

@@ -52,4 +52,5 @@ pub enum ZoidTokenKind {
     VaArgs,
     OpRangeInclusive,
     OpDot,
+    Identifier,
 }
