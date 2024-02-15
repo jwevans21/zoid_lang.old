@@ -391,3 +391,220 @@ fn identifiers() {
     );
     assert_eq!(lexer.tokenize(), Ok(None));
 }
+
+#[test]
+fn keywords() {
+    let fname = "test_keywords";
+    let input = r#"if
+else
+fn
+let
+return
+for
+while
+break
+continue
+in
+struct
+enum
+union
+impl
+trait
+where
+async
+await
+gen
+yield
+import
+importc
+
+and
+or
+not"#;
+
+    let mut lexer = ZoidLexer::new(input, fname);
+    let base_loc = ZoidLocation {
+        file_name: fname,
+        line: 1,
+        column: 1,
+        start: 0,
+        end: 0,
+    };
+
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_range(0..2),
+            kind: ZoidTokenKind::KWIf,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(2).new_range(3..7),
+            kind: ZoidTokenKind::KWElse,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(3).new_range(8..10),
+            kind: ZoidTokenKind::KWFn,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(4).new_range(11..14),
+            kind: ZoidTokenKind::KWLet,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(5).new_range(15..21),
+            kind: ZoidTokenKind::KWReturn,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(6).new_range(22..25),
+            kind: ZoidTokenKind::KWFor,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(7).new_range(26..31),
+            kind: ZoidTokenKind::KWWhile,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(8).new_range(32..37),
+            kind: ZoidTokenKind::KWBreak,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(9).new_range(38..46),
+            kind: ZoidTokenKind::KWContinue,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(10).new_range(47..49),
+            kind: ZoidTokenKind::KWIn,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(11).new_range(50..56),
+            kind: ZoidTokenKind::KWStruct,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(12).new_range(57..61),
+            kind: ZoidTokenKind::KWEnum,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(13).new_range(62..67),
+            kind: ZoidTokenKind::KWUnion,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(14).new_range(68..72),
+            kind: ZoidTokenKind::KWImpl,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(15).new_range(73..78),
+            kind: ZoidTokenKind::KWTrait,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(16).new_range(79..84),
+            kind: ZoidTokenKind::KWWhere,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(17).new_range(85..90),
+            kind: ZoidTokenKind::KWAsync,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(18).new_range(91..96),
+            kind: ZoidTokenKind::KWAwait,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(19).new_range(97..100),
+            kind: ZoidTokenKind::KWGen,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(20).new_range(101..106),
+            kind: ZoidTokenKind::KWYield,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(21).new_range(107..113),
+            kind: ZoidTokenKind::KWImport,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(22).new_range(114..121),
+            kind: ZoidTokenKind::KWImportC,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(24).new_range(123..126),
+            kind: ZoidTokenKind::OpAnd,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(25).new_range(127..129),
+            kind: ZoidTokenKind::OpOr,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(26).new_range(130..133),
+            kind: ZoidTokenKind::OpNot,
+        }))
+    );
+    assert_eq!(lexer.tokenize(), Ok(None));
+}

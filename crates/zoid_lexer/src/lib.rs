@@ -230,7 +230,33 @@ impl<'source, 'fname> ZoidLexer<'source, 'fname> {
             self.next_char();
         }
 
-        match self.input[start.start..self.location.end] {
+        match &self.input[start.start..self.location.end] {
+            "if" => ZoidTokenKind::KWIf,
+            "else" => ZoidTokenKind::KWElse,
+            "fn" => ZoidTokenKind::KWFn,
+            "let" => ZoidTokenKind::KWLet,
+            "return" => ZoidTokenKind::KWReturn,
+            "for" => ZoidTokenKind::KWFor,
+            "while" => ZoidTokenKind::KWWhile,
+            "break" => ZoidTokenKind::KWBreak,
+            "continue" => ZoidTokenKind::KWContinue,
+            "in" => ZoidTokenKind::KWIn,
+            "struct" => ZoidTokenKind::KWStruct,
+            "enum" => ZoidTokenKind::KWEnum,
+            "union" => ZoidTokenKind::KWUnion,
+            "impl" => ZoidTokenKind::KWImpl,
+            "trait" => ZoidTokenKind::KWTrait,
+            "where" => ZoidTokenKind::KWWhere,
+            "async" => ZoidTokenKind::KWAsync,
+            "await" => ZoidTokenKind::KWAwait,
+            "gen" => ZoidTokenKind::KWGen,
+            "yield" => ZoidTokenKind::KWYield,
+            "import" => ZoidTokenKind::KWImport,
+            "importc" => ZoidTokenKind::KWImportC,
+            "and" => ZoidTokenKind::OpAnd,
+            "or" => ZoidTokenKind::OpOr,
+            "not" => ZoidTokenKind::OpNot,
+
             _ => ZoidTokenKind::Identifier,
         }
     }
