@@ -75,4 +75,16 @@ pub enum ZoidTokenKind {
     KWYield,
     KWImport,
     KWImportC,
+    KWExtern,
+    BoolLitTrue,
+    BoolLitFalse,
+    StringLiteral,
+    CStringLiteral,
+    RawStringLiteral,
+    CharLiteral,
+    IntLiteral,
+    FloatLiteral,
+
+    LineComment,
+    BlockComment,
 }

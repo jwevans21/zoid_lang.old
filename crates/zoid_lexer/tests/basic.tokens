@@ -1,0 +1,632 @@
+[
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 1,
+            column: 1,
+            start: 0,
+            end: 6,
+        },
+        kind: KWExtern,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 1,
+            column: 8,
+            start: 7,
+            end: 10,
+        },
+        kind: StringLiteral,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 1,
+            column: 12,
+            start: 11,
+            end: 17,
+        },
+        kind: Identifier,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 1,
+            column: 18,
+            start: 17,
+            end: 18,
+        },
+        kind: LParen,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 1,
+            column: 19,
+            start: 18,
+            end: 24,
+        },
+        kind: Identifier,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 1,
+            column: 25,
+            start: 24,
+            end: 25,
+        },
+        kind: Colon,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 1,
+            column: 27,
+            start: 26,
+            end: 27,
+        },
+        kind: OpMul,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 1,
+            column: 28,
+            start: 27,
+            end: 32,
+        },
+        kind: Identifier,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 1,
+            column: 34,
+            start: 33,
+            end: 35,
+        },
+        kind: Identifier,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 1,
+            column: 36,
+            start: 35,
+            end: 36,
+        },
+        kind: Comma,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 1,
+            column: 38,
+            start: 37,
+            end: 40,
+        },
+        kind: VaArgs,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 1,
+            column: 41,
+            start: 40,
+            end: 41,
+        },
+        kind: RParen,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 1,
+            column: 42,
+            start: 41,
+            end: 42,
+        },
+        kind: Semicolon,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 3,
+            column: 1,
+            start: 44,
+            end: 100,
+        },
+        kind: LineComment,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 4,
+            column: 1,
+            start: 100,
+            end: 102,
+        },
+        kind: KWFn,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 4,
+            column: 4,
+            start: 103,
+            end: 107,
+        },
+        kind: Identifier,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 4,
+            column: 8,
+            start: 107,
+            end: 108,
+        },
+        kind: LParen,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 4,
+            column: 9,
+            start: 108,
+            end: 109,
+        },
+        kind: RParen,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 4,
+            column: 10,
+            start: 109,
+            end: 110,
+        },
+        kind: Colon,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 4,
+            column: 12,
+            start: 111,
+            end: 114,
+        },
+        kind: Identifier,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 4,
+            column: 16,
+            start: 115,
+            end: 116,
+        },
+        kind: LBrace,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 5,
+            column: 5,
+            start: 121,
+            end: 168,
+        },
+        kind: LineComment,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 6,
+            column: 5,
+            start: 172,
+            end: 175,
+        },
+        kind: KWLet,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 6,
+            column: 9,
+            start: 176,
+            end: 177,
+        },
+        kind: Identifier,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 6,
+            column: 11,
+            start: 178,
+            end: 179,
+        },
+        kind: OpAssign,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 6,
+            column: 13,
+            start: 180,
+            end: 182,
+        },
+        kind: IntLiteral,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 6,
+            column: 15,
+            start: 182,
+            end: 183,
+        },
+        kind: Semicolon,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 7,
+            column: 5,
+            start: 188,
+            end: 191,
+        },
+        kind: KWLet,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 7,
+            column: 9,
+            start: 192,
+            end: 193,
+        },
+        kind: Identifier,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 7,
+            column: 11,
+            start: 194,
+            end: 195,
+        },
+        kind: OpAssign,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 7,
+            column: 13,
+            start: 196,
+            end: 197,
+        },
+        kind: Identifier,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 7,
+            column: 15,
+            start: 198,
+            end: 199,
+        },
+        kind: OpMul,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 7,
+            column: 17,
+            start: 200,
+            end: 201,
+        },
+        kind: IntLiteral,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 7,
+            column: 19,
+            start: 202,
+            end: 203,
+        },
+        kind: OpAdd,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 7,
+            column: 21,
+            start: 204,
+            end: 206,
+        },
+        kind: IntLiteral,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 7,
+            column: 23,
+            start: 206,
+            end: 207,
+        },
+        kind: Semicolon,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 9,
+            column: 5,
+            start: 213,
+            end: 260,
+        },
+        kind: LineComment,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 10,
+            column: 5,
+            start: 264,
+            end: 323,
+        },
+        kind: LineComment,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 11,
+            column: 5,
+            start: 327,
+            end: 333,
+        },
+        kind: Identifier,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 11,
+            column: 11,
+            start: 333,
+            end: 334,
+        },
+        kind: LParen,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 11,
+            column: 12,
+            start: 334,
+            end: 355,
+        },
+        kind: CStringLiteral,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 11,
+            column: 33,
+            start: 355,
+            end: 356,
+        },
+        kind: Comma,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 11,
+            column: 35,
+            start: 357,
+            end: 358,
+        },
+        kind: LParen,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 11,
+            column: 36,
+            start: 358,
+            end: 359,
+        },
+        kind: Identifier,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 11,
+            column: 38,
+            start: 360,
+            end: 361,
+        },
+        kind: OpSub,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 11,
+            column: 40,
+            start: 362,
+            end: 364,
+        },
+        kind: IntLiteral,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 11,
+            column: 42,
+            start: 364,
+            end: 365,
+        },
+        kind: RParen,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 11,
+            column: 44,
+            start: 366,
+            end: 367,
+        },
+        kind: OpDiv,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 11,
+            column: 46,
+            start: 368,
+            end: 369,
+        },
+        kind: IntLiteral,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 11,
+            column: 47,
+            start: 369,
+            end: 370,
+        },
+        kind: RParen,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 11,
+            column: 48,
+            start: 370,
+            end: 371,
+        },
+        kind: Semicolon,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 13,
+            column: 5,
+            start: 377,
+            end: 446,
+        },
+        kind: LineComment,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 14,
+            column: 5,
+            start: 450,
+            end: 508,
+        },
+        kind: LineComment,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 15,
+            column: 5,
+            start: 512,
+            end: 518,
+        },
+        kind: KWReturn,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 15,
+            column: 12,
+            start: 519,
+            end: 520,
+        },
+        kind: LParen,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 15,
+            column: 13,
+            start: 520,
+            end: 521,
+        },
+        kind: Identifier,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 15,
+            column: 15,
+            start: 522,
+            end: 523,
+        },
+        kind: OpSub,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 15,
+            column: 17,
+            start: 524,
+            end: 526,
+        },
+        kind: IntLiteral,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 15,
+            column: 19,
+            start: 526,
+            end: 527,
+        },
+        kind: RParen,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 15,
+            column: 21,
+            start: 528,
+            end: 529,
+        },
+        kind: OpDiv,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 15,
+            column: 23,
+            start: 530,
+            end: 531,
+        },
+        kind: IntLiteral,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 15,
+            column: 24,
+            start: 531,
+            end: 532,
+        },
+        kind: Semicolon,
+    },
+    ZoidToken {
+        location: ZoidLocation {
+            file_name: "../../../examples/basic.zd",
+            line: 16,
+            column: 1,
+            start: 533,
+            end: 534,
+        },
+        kind: RBrace,
+    },
+]

@@ -417,6 +417,7 @@ gen
 yield
 import
 importc
+extern
 
 and
 or
@@ -588,23 +589,193 @@ not"#;
     assert_eq!(
         lexer.tokenize(),
         Ok(Some(ZoidToken {
-            location: base_loc.new_line(24).new_range(123..126),
+            location: base_loc.new_line(23).new_range(122..128),
+            kind: ZoidTokenKind::KWExtern,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(25).new_range(130..133),
             kind: ZoidTokenKind::OpAnd,
         }))
     );
     assert_eq!(
         lexer.tokenize(),
         Ok(Some(ZoidToken {
-            location: base_loc.new_line(25).new_range(127..129),
+            location: base_loc.new_line(26).new_range(134..136),
             kind: ZoidTokenKind::OpOr,
         }))
     );
     assert_eq!(
         lexer.tokenize(),
         Ok(Some(ZoidToken {
-            location: base_loc.new_line(26).new_range(130..133),
+            location: base_loc.new_line(27).new_range(137..140),
             kind: ZoidTokenKind::OpNot,
         }))
     );
+    assert_eq!(lexer.tokenize(), Ok(None));
+}
+
+#[test]
+fn boolean_literals() {
+    let fname = "test_boolean_literals";
+    let input = "true false";
+
+    let mut lexer = ZoidLexer::new(input, fname);
+    let base_loc = ZoidLocation {
+        file_name: fname,
+        line: 1,
+        column: 1,
+        start: 0,
+        end: 0,
+    };
+
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_range(0..4),
+            kind: ZoidTokenKind::BoolLitTrue,
+        }))
+    );
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_col(6).new_range(5..10),
+            kind: ZoidTokenKind::BoolLitFalse,
+        }))
+    );
+    assert_eq!(lexer.tokenize(), Ok(None));
+}
+
+#[test]
+fn string_literals() {
+    let fname = "test_string_literals";
+    let input = r#####"c""
+c"Hello, World"
+""
+"Hello, World"
+r#""#
+r#""Hello, World""#
+r###"r#""#"###
+"\"Hello, World\""
+    "#####;
+
+    let mut lexer = ZoidLexer::new(input, fname);
+    let base_loc = ZoidLocation {
+        file_name: fname,
+        line: 1,
+        column: 1,
+        start: 0,
+        end: 0,
+    };
+
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_range(0..3),
+            kind: ZoidTokenKind::CStringLiteral,
+        }))
+    );
+    assert_eq!(&input[0..3], r#"c"""#);
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(2).new_col(1).new_range(4..19),
+            kind: ZoidTokenKind::CStringLiteral,
+        }))
+    );
+    assert_eq!(&input[4..19], r#"c"Hello, World""#);
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(3).new_range(20..22),
+            kind: ZoidTokenKind::StringLiteral,
+        }))
+    );
+    assert_eq!(&input[20..22], r#""""#);
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(4).new_range(23..37),
+            kind: ZoidTokenKind::StringLiteral,
+        }))
+    );
+    assert_eq!(&input[23..37], r#""Hello, World""#);
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(5).new_range(38..43),
+            kind: ZoidTokenKind::RawStringLiteral,
+        }))
+    );
+    assert_eq!(&input[38..43], r##"r#""#"##);
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(6).new_range(44..63),
+            kind: ZoidTokenKind::RawStringLiteral,
+        }))
+    );
+    assert_eq!(&input[44..63], r##"r#""Hello, World""#"##);
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(7).new_range(64..78),
+            kind: ZoidTokenKind::RawStringLiteral,
+        }))
+    );
+    assert_eq!(&input[64..78], r####"r###"r#""#"###"####);
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_line(8).new_range(79..97),
+            kind: ZoidTokenKind::StringLiteral,
+        }))
+    );
+    assert_eq!(&input[79..97], r#""\"Hello, World\"""#);
+
+    assert_eq!(lexer.tokenize(), Ok(None));
+}
+
+#[test]
+fn character_literals() {
+    let fname = "test_character_literals";
+    let input = r#"'a' '\'' 'abc'"#;
+
+    let mut lexer = ZoidLexer::new(input, fname);
+    let base_loc = ZoidLocation {
+        file_name: fname,
+        line: 1,
+        column: 1,
+        start: 0,
+        end: 0,
+    };
+
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_range(0..3),
+            kind: ZoidTokenKind::CharLiteral,
+        }))
+    );
+    assert_eq!(&input[0..3], r#"'a'"#);
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_col(5).new_range(4..8),
+            kind: ZoidTokenKind::CharLiteral,
+        }))
+    );
+    assert_eq!(&input[4..8], r#"'\''"#);
+    assert_eq!(
+        lexer.tokenize(),
+        Ok(Some(ZoidToken {
+            location: base_loc.new_col(10).new_range(9..14),
+            kind: ZoidTokenKind::CharLiteral,
+        }))
+    );
+    assert_eq!(&input[9..14], r#"'abc'"#);
+
     assert_eq!(lexer.tokenize(), Ok(None));
 }

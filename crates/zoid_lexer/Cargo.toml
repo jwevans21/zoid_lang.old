@@ -7,3 +7,6 @@ edition = "2021"
 
 [dependencies]
 zoid_location = { path = "../zoid_location" }
+
+[dev-dependencies]
+expect-test = "1.4.1"

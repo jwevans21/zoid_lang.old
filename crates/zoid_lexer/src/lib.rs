@@ -27,6 +27,14 @@ pub struct ZoidLexer<'source, 'fname> {
     location: ZoidLocation<'fname>,
 }
 
+impl<'source, 'fname> Iterator for ZoidLexer<'source, 'fname> {
+    type Item = ZoidToken<'fname>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.tokenize().ok().flatten()
+    }
+}
+
 impl<'source, 'fname> ZoidLexer<'source, 'fname> {
     /// Create a new lexer for the Zoid language
     ///
@@ -55,7 +63,7 @@ impl<'source, 'fname> ZoidLexer<'source, 'fname> {
     /// however, when encountering an unknown symbol it will return the `Err` variant.
     ///
     /// This can be ignored by calling `tokenize` again to get the next token.
-    pub fn tokenize(&mut self) -> Result<Option<ZoidToken>, String> {
+    pub fn tokenize(&mut self) -> Result<Option<ZoidToken<'fname>>, String> {
         self.consume_whitespace();
         let start = self.location;
 
@@ -139,7 +147,11 @@ impl<'source, 'fname> ZoidLexer<'source, 'fname> {
             '+' => ZoidTokenKind::OpAdd,
             '-' => ZoidTokenKind::OpSub,
             '*' => ZoidTokenKind::OpMul,
-            '/' => ZoidTokenKind::OpDiv,
+            '/' => match self.peek_char() {
+                Some('/') => self.consume_line_comment(),
+                Some('*') => self.consume_block_comment(),
+                _ => ZoidTokenKind::OpDiv,
+            },
             '%' => ZoidTokenKind::OpRem,
             '.' => match self.peek_char() {
                 Some('&') => {
@@ -175,15 +187,22 @@ impl<'source, 'fname> ZoidLexer<'source, 'fname> {
                 _ => ZoidTokenKind::OpDot,
             },
             'c' => match self.peek_char() {
-                Some('"') => todo!("C String Literal"),
+                Some('"') => {
+                    self.next_char();
+                    self.consume_string_literal();
+                    ZoidTokenKind::CStringLiteral
+                }
                 _ => self.consume_identifier(&start),
             },
             'r' => match self.peek_char() {
-                Some('#') => todo!("Raw String Literal"),
+                Some('#') => self.consume_raw_string_literal(),
                 _ => self.consume_identifier(&start),
             },
             // TODO: Implement Unicode XID
             'a'..='z' | 'A'..='Z' | '_' => self.consume_identifier(&start),
+            '"' => self.consume_string_literal(),
+            '\'' => self.consume_character_literal(),
+            '0'..='9' => self.consume_numeric_literal(),
             _ => return Err(String::from("Unknown Character in Input")),
         };
 
@@ -219,9 +238,8 @@ impl<'source, 'fname> ZoidLexer<'source, 'fname> {
             if c.is_whitespace() {
                 self.next_char();
                 continue;
-            } else {
-                break;
             }
+            break;
         }
     }
 
@@ -253,11 +271,140 @@ impl<'source, 'fname> ZoidLexer<'source, 'fname> {
             "yield" => ZoidTokenKind::KWYield,
             "import" => ZoidTokenKind::KWImport,
             "importc" => ZoidTokenKind::KWImportC,
+            "extern" => ZoidTokenKind::KWExtern,
+
             "and" => ZoidTokenKind::OpAnd,
             "or" => ZoidTokenKind::OpOr,
             "not" => ZoidTokenKind::OpNot,
 
+            "true" => ZoidTokenKind::BoolLitTrue,
+            "false" => ZoidTokenKind::BoolLitFalse,
+
             _ => ZoidTokenKind::Identifier,
         }
+    }
+
+    fn consume_string_literal(&mut self) -> ZoidTokenKind {
+        while let Some(c) = self.peek_char() {
+            self.next_char();
+            if c == '"' {
+                break;
+            } else if c == '\\' {
+                self.next_char();
+            }
+        }
+
+        ZoidTokenKind::StringLiteral
+    }
+
+    fn consume_raw_string_literal(&mut self) -> ZoidTokenKind {
+        let mut count = 0;
+        while let Some(c) = self.peek_char() {
+            if c == '#' {
+                count += 1;
+                self.next_char();
+            } else {
+                break;
+            }
+        }
+
+        while let Some(c) = self.peek_char() {
+            self.next_char();
+            if c == '"' {
+                let mut count2 = 0;
+                while let Some(c) = self.peek_char() {
+                    if c == '#' {
+                        count2 += 1;
+                        self.next_char();
+                    } else {
+                        break;
+                    }
+                }
+
+                if count == count2 {
+                    break;
+                }
+            }
+        }
+
+        ZoidTokenKind::RawStringLiteral
+    }
+
+    fn consume_character_literal(&mut self) -> ZoidTokenKind {
+        while let Some(c) = self.peek_char() {
+            self.next_char();
+            if c == '\'' {
+                break;
+            } else if c == '\\' {
+                self.next_char();
+            }
+        }
+
+        ZoidTokenKind::CharLiteral
+    }
+
+    fn consume_numeric_literal(&mut self) -> ZoidTokenKind {
+        let mut is_float = false;
+        while let Some('0'..='9') = self.peek_char() {
+            self.next_char();
+        }
+
+        if let Some('.') = self.peek_char() {
+            self.next_char();
+
+            while let Some('0'..='9') = self.peek_char() {
+                self.next_char();
+            }
+            is_float = true;
+        }
+
+        if let Some('e') | Some('E') = self.peek_char() {
+            self.next_char();
+            if let Some('+') | Some('-') = self.peek_char() {
+                self.next_char();
+            }
+            while let Some('0'..='9') = self.peek_char() {
+                self.next_char();
+            }
+            is_float = true;
+        }
+
+        if is_float {
+            ZoidTokenKind::FloatLiteral
+        } else {
+            ZoidTokenKind::IntLiteral
+        }
+    }
+
+    fn consume_line_comment(&mut self) -> ZoidTokenKind {
+        while let Some(c) = self.next_char() {
+            if c == '\n' {
+                break;
+            }
+        }
+
+        ZoidTokenKind::LineComment
+    }
+
+    fn consume_block_comment(&mut self) -> ZoidTokenKind {
+        let mut depth = 1;
+        while let Some(c) = self.next_char() {
+            if c == '/' {
+                if let Some('*') = self.peek_char() {
+                    self.next_char();
+                    depth += 1;
+                }
+            } else if c == '*' {
+                if let Some('/') = self.peek_char() {
+                    self.next_char();
+                    depth -= 1;
+                    if depth == 0 {
+                        break;
+                    }
+                }
+            }
+        }
+
+        ZoidTokenKind::BlockComment
     }
 }
