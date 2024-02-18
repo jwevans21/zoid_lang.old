@@ -102,6 +102,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "zoid_ast"
+version = "0.1.0"
+
+[[package]]
 name = "zoid_lexer"
 version = "0.1.0"
 dependencies = [

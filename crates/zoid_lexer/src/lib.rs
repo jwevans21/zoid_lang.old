@@ -17,7 +17,7 @@ mod token;
 
 #[derive(Debug, Clone)]
 /// The lexer for the Zoid language. Used to generate tokens which are then parsed into an AST
-pub struct ZoidLexer<'source, 'fname> {
+pub struct ZoidLexer<'fname, 'source> {
     #[allow(unused)]
     /// The input used to match keywords
     input: &'source str,
@@ -27,7 +27,7 @@ pub struct ZoidLexer<'source, 'fname> {
     location: ZoidLocation<'fname>,
 }
 
-impl<'source, 'fname> Iterator for ZoidLexer<'source, 'fname> {
+impl<'fname, 'source> Iterator for ZoidLexer<'fname, 'source> {
     type Item = ZoidToken<'fname>;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -35,14 +35,14 @@ impl<'source, 'fname> Iterator for ZoidLexer<'source, 'fname> {
     }
 }
 
-impl<'source, 'fname> ZoidLexer<'source, 'fname> {
+impl<'fname, 'source> ZoidLexer<'fname, 'source> {
     /// Create a new lexer for the Zoid language
     ///
     /// The `input` should be the content of a file containing Zoid source code
     ///
     /// The `file_name` should contain the file name that the source code originates from.
     /// *This is only used for diagnostic reporting*
-    pub fn new(input: &'source str, file_name: &'fname str) -> Self {
+    pub fn new(file_name: &'fname str, input: &'source str) -> Self {
         Self {
             input,
             source: input.chars(),

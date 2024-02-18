@@ -1,0 +1,25 @@
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Type<'ast> {
+    Pointer(&'ast Type<'ast>),
+    Function(&'ast (&'ast [&'ast Type<'ast>], &'ast Type<'ast>)),
+
+    U8,
+    U16,
+    U32,
+    U64,
+    U128,
+    Usize,
+    I8,
+    I16,
+    I32,
+    I64,
+    I128,
+    Isize,
+    F16,
+    F32,
+    F64,
+    F128,
+    Bool,
+    Char,
+    Void,
+}

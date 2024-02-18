@@ -7,7 +7,7 @@ init!("../../../examples/basic.zd");
 
 #[test]
 fn basic_test() {
-    let lexer = ZoidLexer::new(INPUT, FNAME);
+    let lexer = ZoidLexer::new(FNAME, INPUT);
 
     let expected = expect_file!["./basic.tokens"];
     let actual: Vec<_> = lexer.collect();

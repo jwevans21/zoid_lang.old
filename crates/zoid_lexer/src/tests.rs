@@ -5,7 +5,7 @@ use super::*;
 #[test]
 fn brackets() {
     let fname = "test_brackets";
-    let mut lexer = ZoidLexer::new("(){}[]<::>", fname);
+    let mut lexer = ZoidLexer::new(fname, "(){}[]<::>");
 
     let base_loc = ZoidLocation {
         file_name: fname,
@@ -81,7 +81,7 @@ fn brackets() {
 #[test]
 fn special() {
     let fname = "test_special";
-    let mut lexer = ZoidLexer::new(":,;", fname);
+    let mut lexer = ZoidLexer::new(fname, ":,;");
 
     let base_loc = ZoidLocation {
         file_name: fname,
@@ -121,7 +121,7 @@ fn operators() {
     let input = "<= < >= > = == ! != & && | || ~ + - * / % << >>\n\
                          .& .* .? ..< ..= .. ... .";
 
-    let mut lexer = ZoidLexer::new(input, fname);
+    let mut lexer = ZoidLexer::new(fname, input);
     let base_loc = ZoidLocation {
         file_name: fname,
         line: 1,
@@ -338,7 +338,7 @@ fn identifiers() {
     let fname = "test_identifiers";
     let input = "a abc _a __ _ a_090_";
 
-    let mut lexer = ZoidLexer::new(input, fname);
+    let mut lexer = ZoidLexer::new(fname, input);
     let base_loc = ZoidLocation {
         file_name: fname,
         line: 1,
@@ -423,7 +423,7 @@ and
 or
 not"#;
 
-    let mut lexer = ZoidLexer::new(input, fname);
+    let mut lexer = ZoidLexer::new(fname, input);
     let base_loc = ZoidLocation {
         file_name: fname,
         line: 1,
@@ -622,7 +622,7 @@ fn boolean_literals() {
     let fname = "test_boolean_literals";
     let input = "true false";
 
-    let mut lexer = ZoidLexer::new(input, fname);
+    let mut lexer = ZoidLexer::new(fname, input);
     let base_loc = ZoidLocation {
         file_name: fname,
         line: 1,
@@ -661,7 +661,7 @@ r###"r#""#"###
 "\"Hello, World\""
     "#####;
 
-    let mut lexer = ZoidLexer::new(input, fname);
+    let mut lexer = ZoidLexer::new(fname, input);
     let base_loc = ZoidLocation {
         file_name: fname,
         line: 1,
@@ -743,7 +743,7 @@ fn character_literals() {
     let fname = "test_character_literals";
     let input = r#"'a' '\'' 'abc'"#;
 
-    let mut lexer = ZoidLexer::new(input, fname);
+    let mut lexer = ZoidLexer::new(fname, input);
     let base_loc = ZoidLocation {
         file_name: fname,
         line: 1,
