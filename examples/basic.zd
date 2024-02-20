@@ -1,14 +1,44 @@
-extern "C" printf(format: *const u8, ...);
+extern "C" fn printf(format: *const u8, ...): i32;
 
 // A main function that returns a 32 bit signed integer
-fn main(): i32 {
+fn main(argc: i32): i32 {
     // Declare two variables and perform some math
     let a = 42;
     let b = a * 2 + 57;
 
     // Call the external printf function from libc
     // This uses a C string literal to ensure null termination
-    printf(c"The answer is %d\n", (b - 57) / 2);
+    printf(c"The answer is %d == %f\n", (b - 57) / 2, 42 : f64);
+
+    // A basic if statement for equality
+    if a == b {
+        printf(c"Math is wrong\n");
+    } else if a != b {
+        printf(c"Math is correct\n");
+    } else {
+        // Unreachable
+    }
+
+    // Comparisons
+    if a >= b and a <= b {
+        printf(c"They must be equal\n");
+    } else if a && b {
+        printf(c"This should always be true\n");
+    } else {
+        printf(c"Unreachable\n");
+    }
+
+    // While Loop
+    let i = 0;
+    while i < 21 {
+        printf(c"While Loop Iteration: %d\n", i);
+
+        if i >= 10 {
+            break;
+        }
+
+        i = i + 1;
+    }
 
     // Return a value from main. This will be used to infer the types of
     // the variables a and b. This also shows basic grouping.
