@@ -1,10 +1,7 @@
 #![feature(allocator_api)]
 
-use std::fmt::format;
-
 use bumpalo::Bump;
-use hashbrown::HashMap;
-use zoid_ast::{BinaryOperator, Type};
+use zoid_ast::{BinaryOperator, Expression, FunctionParams, Statement, TopLevel, Type};
 use zoid_lexer::{ZoidLexer, ZoidToken, ZoidTokenKind};
 use zoid_location::ZoidLocation;
 
@@ -14,7 +11,7 @@ pub struct ZoidParser<'arena, 'fname, 'input> {
     fname: &'fname str,
     input: &'input str,
     lexer: ZoidLexer<'fname, 'input>,
-    program: Vec<zoid_ast::TopLevel<'arena>, &'arena Bump>,
+    program: Vec<TopLevel<'arena>, &'arena Bump>,
     // symbol_table: HashMap<&'arena str, (), _, &'arena Bump>
 }
 
@@ -120,10 +117,6 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
             .is_some_and(|tok| tok.kind == kind)
     }
 
-    fn peek_next(&mut self) -> Option<ZoidToken<'fname>> {
-        self.lexer.clone().next()
-    }
-
     pub fn parse(&mut self) -> Result<(), String> {
         while let Some(tok) = self.lexer.by_ref().next() {
             let kind = tok.kind;
@@ -169,7 +162,7 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
 
         let inner = self.arena.alloc((name, args, ret, va_args));
 
-        self.program.push(zoid_ast::TopLevel::ExternFunction(inner));
+        self.program.push(TopLevel::ExternFunction(inner));
 
         Ok(())
     }
@@ -195,14 +188,12 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
 
         let inner = self.arena.alloc((name, args, ret, body));
 
-        self.program.push(zoid_ast::TopLevel::Function(inner));
+        self.program.push(TopLevel::Function(inner));
 
         Ok(())
     }
 
-    fn parse_extern_args(
-        &mut self,
-    ) -> Result<(&'arena [&'arena zoid_ast::Type<'arena>], bool), String> {
+    fn parse_extern_args(&mut self) -> Result<(&'arena [&'arena Type<'arena>], bool), String> {
         let mut args = Vec::new_in(self.arena);
         let mut va_args = false;
 
@@ -242,15 +233,7 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
         Ok((args.leak(), va_args))
     }
 
-    fn parse_args(
-        &mut self,
-    ) -> Result<
-        (
-            &'arena [(&'arena str, &'arena zoid_ast::Type<'arena>)],
-            bool,
-        ),
-        String,
-    > {
+    fn parse_args(&mut self) -> Result<FunctionParams<'arena>, String> {
         let mut args = Vec::new_in(self.arena);
         let mut va_args = false;
 
@@ -294,35 +277,35 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
         Ok((args.leak(), va_args))
     }
 
-    fn parse_type(&mut self) -> Result<&'arena zoid_ast::Type<'arena>, String> {
+    fn parse_type(&mut self) -> Result<&'arena Type<'arena>, String> {
         let tok = self.lexer.next().ok_or("expected token, found EOF")?;
 
         Ok(match tok.kind {
             ZoidTokenKind::BlockComment | ZoidTokenKind::LineComment => self.parse_type()?,
             ZoidTokenKind::OpMul => {
                 let ty = self.parse_type()?;
-                self.arena.alloc(zoid_ast::Type::Pointer(ty))
+                self.arena.alloc(Type::Pointer(ty))
             }
             ZoidTokenKind::Identifier => {
                 let name: &'arena str = self
                     .arena
                     .alloc_str(&self.input[tok.location.start..tok.location.end]);
                 match name {
-                    "void" => self.arena.alloc(zoid_ast::Type::Void),
-                    "bool" => self.arena.alloc(zoid_ast::Type::Bool),
-                    "char" => self.arena.alloc(zoid_ast::Type::Char),
-                    "u8" => self.arena.alloc(zoid_ast::Type::U8),
-                    "u16" => self.arena.alloc(zoid_ast::Type::U16),
-                    "u32" => self.arena.alloc(zoid_ast::Type::U32),
-                    "u64" => self.arena.alloc(zoid_ast::Type::U64),
-                    "usize" => self.arena.alloc(zoid_ast::Type::Usize),
-                    "i8" => self.arena.alloc(zoid_ast::Type::I8),
-                    "i16" => self.arena.alloc(zoid_ast::Type::I16),
-                    "i32" => self.arena.alloc(zoid_ast::Type::I32),
-                    "i64" => self.arena.alloc(zoid_ast::Type::I64),
-                    "isize" => self.arena.alloc(zoid_ast::Type::Isize),
-                    "f32" => self.arena.alloc(zoid_ast::Type::F32),
-                    "f64" => self.arena.alloc(zoid_ast::Type::F64),
+                    "void" => self.arena.alloc(Type::Void),
+                    "bool" => self.arena.alloc(Type::Bool),
+                    "char" => self.arena.alloc(Type::Char),
+                    "u8" => self.arena.alloc(Type::U8),
+                    "u16" => self.arena.alloc(Type::U16),
+                    "u32" => self.arena.alloc(Type::U32),
+                    "u64" => self.arena.alloc(Type::U64),
+                    "usize" => self.arena.alloc(Type::Usize),
+                    "i8" => self.arena.alloc(Type::I8),
+                    "i16" => self.arena.alloc(Type::I16),
+                    "i32" => self.arena.alloc(Type::I32),
+                    "i64" => self.arena.alloc(Type::I64),
+                    "isize" => self.arena.alloc(Type::Isize),
+                    "f32" => self.arena.alloc(Type::F32),
+                    "f64" => self.arena.alloc(Type::F64),
                     _ => {
                         return Err(format!("unknown type {:?}", name));
                     }
@@ -330,7 +313,7 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
             }
             ZoidTokenKind::KWConst => {
                 let ty = self.parse_type()?;
-                self.arena.alloc(zoid_ast::Type::Const(ty))
+                self.arena.alloc(Type::Const(ty))
             }
             _ => {
                 let err = format!("unexpected token {:?} {}", tok.kind, line!());
@@ -341,7 +324,7 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
         })
     }
 
-    fn parse_block(&mut self) -> Result<&'arena [&'arena zoid_ast::Statement<'arena>], String> {
+    fn parse_block(&mut self) -> Result<&'arena [&'arena Statement<'arena>], String> {
         let mut stmts = Vec::new_in(self.arena);
 
         loop {
@@ -365,19 +348,19 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
     fn parse_statement(
         &mut self,
         tok: ZoidToken<'fname>,
-    ) -> Result<&'arena zoid_ast::Statement<'arena>, String> {
+    ) -> Result<&'arena Statement<'arena>, String> {
         Ok(match tok.kind {
             ZoidTokenKind::LBrace => {
                 let stmts = self.parse_block()?;
-                self.arena.alloc(zoid_ast::Statement::Block(stmts))
+                self.arena.alloc(Statement::Block(stmts))
             }
             ZoidTokenKind::KWBreak => {
                 self.expect(ZoidTokenKind::Semicolon)?;
-                self.arena.alloc(zoid_ast::Statement::Break)
+                self.arena.alloc(Statement::Break)
             }
             ZoidTokenKind::KWContinue => {
                 self.expect(ZoidTokenKind::Semicolon)?;
-                self.arena.alloc(zoid_ast::Statement::Continue)
+                self.arena.alloc(Statement::Continue)
             }
             ZoidTokenKind::KWIf => {
                 let cond = self.parse_expression(None)?;
@@ -404,7 +387,7 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
                 };
 
                 let inner: &'arena _ = self.arena.alloc((cond, then, els));
-                self.arena.alloc(zoid_ast::Statement::If(inner))
+                self.arena.alloc(Statement::If(inner))
             }
             ZoidTokenKind::KWWhile => {
                 let cond = self.parse_expression(None)?;
@@ -418,15 +401,15 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
                 let body = self.parse_statement(tok)?;
 
                 let inner = self.arena.alloc((cond, body));
-                self.arena.alloc(zoid_ast::Statement::While(inner))
+                self.arena.alloc(Statement::While(inner))
             }
             ZoidTokenKind::KWReturn => {
                 let res = if self.next_is(ZoidTokenKind::Semicolon) {
                     self.lexer.next();
-                    self.arena.alloc(zoid_ast::Statement::Return(None))
+                    self.arena.alloc(Statement::Return(None))
                 } else {
                     let expr = self.parse_expression(None)?;
-                    self.arena.alloc(zoid_ast::Statement::Return(Some(expr)))
+                    self.arena.alloc(Statement::Return(Some(expr)))
                 };
 
                 self.expect(ZoidTokenKind::Semicolon)?;
@@ -456,14 +439,13 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
                     .alloc_str(&self.input[name.location.start..name.location.end]);
 
                 let inner = self.arena.alloc((name, expr, ty));
-                self.arena
-                    .alloc(zoid_ast::Statement::VariableDeclaration(inner))
+                self.arena.alloc(Statement::VariableDeclaration(inner))
             }
             _ => {
                 let expr = self.parse_expression(Some(tok))?;
                 self.expect(ZoidTokenKind::Semicolon)?;
 
-                self.arena.alloc(zoid_ast::Statement::Expression(expr))
+                self.arena.alloc(Statement::Expression(expr))
             }
         })
     }
@@ -471,7 +453,7 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
     fn parse_expression(
         &mut self,
         init: Option<ZoidToken<'fname>>,
-    ) -> Result<&'arena zoid_ast::Expression<'arena>, String> {
+    ) -> Result<&'arena Expression<'arena>, String> {
         let lhs = self.parse_primary(init)?;
 
         if self.next_is(ZoidTokenKind::Comma) {
@@ -484,7 +466,7 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
     fn parse_primary(
         &mut self,
         init: Option<ZoidToken<'fname>>,
-    ) -> Result<&'arena zoid_ast::Expression<'arena>, String> {
+    ) -> Result<&'arena Expression<'arena>, String> {
         let tok = match init {
             Some(tok) => tok,
             None => self.lexer.next().ok_or("expected token, found EOF")?,
@@ -494,35 +476,33 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
             ZoidTokenKind::CStringLiteral => {
                 let s = &self.input[tok.location.start..tok.location.end];
                 let s = s.strip_prefix("c\"").expect("invalid C string literal");
-                let s = s.strip_suffix("\"").expect("invalid C string literal");
+                let s = s.strip_suffix('"').expect("invalid C string literal");
 
                 let s = s.replace("\\n", "\n");
 
                 let s = self.arena.alloc_str(&s);
 
-                self.arena.alloc(zoid_ast::Expression::LiteralCString(s))
+                self.arena.alloc(Expression::LiteralCString(s))
             }
             ZoidTokenKind::StringLiteral => {
                 let s = &self.input[tok.location.start..tok.location.end];
-                let s = s.strip_prefix("\"").unwrap();
-                let s = s.strip_suffix("\"").unwrap();
+                let s = s.strip_prefix('"').unwrap();
+                let s = s.strip_suffix('"').unwrap();
                 let s = self.arena.alloc_str(s);
-                self.arena.alloc(zoid_ast::Expression::LiteralString(s))
+                self.arena.alloc(Expression::LiteralString(s))
             }
             ZoidTokenKind::IntLiteral => {
                 let s = &self.input[tok.location.start..tok.location.end];
                 let s = self.arena.alloc_str(s);
-                self.arena.alloc(zoid_ast::Expression::LiteralInteger(s))
+                self.arena.alloc(Expression::LiteralInteger(s))
             }
             ZoidTokenKind::FloatLiteral => {
                 let s = &self.input[tok.location.start..tok.location.end];
                 let s = self.arena.alloc_str(s);
-                self.arena.alloc(zoid_ast::Expression::LiteralFloat(s))
+                self.arena.alloc(Expression::LiteralFloat(s))
             }
-            ZoidTokenKind::BoolLitFalse => {
-                self.arena.alloc(zoid_ast::Expression::LiteralBool(false))
-            }
-            ZoidTokenKind::BoolLitTrue => self.arena.alloc(zoid_ast::Expression::LiteralBool(true)),
+            ZoidTokenKind::BoolLitFalse => self.arena.alloc(Expression::LiteralBool(false)),
+            ZoidTokenKind::BoolLitTrue => self.arena.alloc(Expression::LiteralBool(true)),
             ZoidTokenKind::Identifier => {
                 let name: &'arena str = self
                     .arena
@@ -531,7 +511,7 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
                 if self.next_is(ZoidTokenKind::LParen) {
                     self.parse_function_call(name)?
                 } else {
-                    self.arena.alloc(zoid_ast::Expression::Variable(name))
+                    self.arena.alloc(Expression::Variable(name))
                 }
             }
             ZoidTokenKind::LParen => {
@@ -569,8 +549,7 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
         self.lexer
             .clone()
             .next()
-            .map(|tok| self.get_precedence(tok.kind))
-            .flatten()
+            .and_then(|tok| self.get_precedence(tok.kind))
             .or(Some(0))
             .expect("expected a Some value, found None")
     }
@@ -601,9 +580,9 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
 
     fn parse_binary_op(
         &mut self,
-        lhs: &'arena zoid_ast::Expression<'arena>,
+        lhs: &'arena Expression<'arena>,
         current_precedence: u8,
-    ) -> Result<&'arena zoid_ast::Expression<'arena>, String> {
+    ) -> Result<&'arena Expression<'arena>, String> {
         let mut lhs = lhs;
 
         loop {
@@ -618,12 +597,12 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
             if tok.kind == ZoidTokenKind::Colon {
                 let ty = self.parse_type()?;
                 let inner = self.arena.alloc((ty, lhs));
-                return Ok(self.arena.alloc(zoid_ast::Expression::Cast(inner)));
+                return Ok(self.arena.alloc(Expression::Cast(inner)));
             }
 
             let op = Self::token_to_bin_op(tok.kind);
 
-            if None == op {
+            if op.is_none() {
                 return Ok(lhs);
             }
 
@@ -638,14 +617,14 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
             }
 
             let inner = self.arena.alloc((op, lhs, rhs));
-            lhs = self.arena.alloc(zoid_ast::Expression::Binary(inner));
+            lhs = self.arena.alloc(Expression::Binary(inner));
         }
     }
 
     fn parse_function_call(
         &mut self,
         name: &'arena str,
-    ) -> Result<&'arena zoid_ast::Expression<'arena>, String> {
+    ) -> Result<&'arena Expression<'arena>, String> {
         self.expect(ZoidTokenKind::LParen)?;
 
         let mut args = Vec::new_in(self.arena);
@@ -668,9 +647,9 @@ impl<'arena, 'fname, 'input> ZoidParser<'arena, 'fname, 'input> {
             }
         }
 
-        let name: &'arena _ = self.arena.alloc(zoid_ast::Expression::Variable(name));
+        let name: &'arena _ = self.arena.alloc(Expression::Variable(name));
         let inner = self.arena.alloc((name, args.leak() as &'arena [_]));
 
-        Ok(self.arena.alloc(zoid_ast::Expression::Call(inner)))
+        Ok(self.arena.alloc(Expression::Call(inner)))
     }
 }

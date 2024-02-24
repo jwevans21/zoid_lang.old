@@ -2,6 +2,8 @@ use std::fmt::{Display, Formatter, Result as FmtResult};
 
 use crate::{expression::Expression, statement::Statement, ty::Type};
 
+pub type FunctionParams<'ast> = (&'ast [(&'ast str, &'ast Type<'ast>)], bool);
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum TopLevel<'ast> {
     Import(&'ast str),
@@ -79,7 +81,7 @@ impl<'ast> TopLevel<'ast> {
     }
 }
 
-impl<'ast> Display for TopLevel<'ast> {
+impl Display for TopLevel<'_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         match self {
             Self::Import(path) => write!(f, "import \"{}\";", path),

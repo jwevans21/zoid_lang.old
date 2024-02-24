@@ -41,14 +41,16 @@ impl Expression<'_> {
 
             Self::UnaryPrefix((op, expr)) => format!("{}{}", op, expr.pretty_print()),
             Self::UnaryPostfix((op, expr)) => format!("{}.{}", expr.pretty_print(), op),
-            Self::Binary((op, lhs, rhs)) => format!("({} {} {})", lhs.pretty_print(), op, rhs.pretty_print()),
+            Self::Binary((op, lhs, rhs)) => {
+                format!("({} {} {})", lhs.pretty_print(), op, rhs.pretty_print())
+            }
 
             Self::Call((callee, args)) => {
                 format!(
                     "{}({})",
                     callee,
                     args.iter()
-                        .map(|arg| format!("{}", arg.pretty_print()))
+                        .map(|arg| arg.pretty_print().to_string())
                         .collect::<Vec<_>>()
                         .join(", ")
                 )
@@ -94,10 +96,10 @@ pub enum BinaryOperator {
     Ge,
     And,
     Or,
-    Assign
+    Assign,
 }
 
-impl<'ast> Display for Expression<'ast> {
+impl Display for Expression<'_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         match self {
             Self::Variable(name) => write!(f, "{}", name),
@@ -130,7 +132,7 @@ impl<'ast> Display for Expression<'ast> {
     }
 }
 
-impl<'ast> Display for PrefixOperator {
+impl Display for PrefixOperator {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         match self {
             Self::Negate => write!(f, "-"),
@@ -140,7 +142,7 @@ impl<'ast> Display for PrefixOperator {
     }
 }
 
-impl<'ast> Display for PostfixOperator {
+impl Display for PostfixOperator {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         match self {
             Self::Deref => write!(f, "*"),
@@ -150,7 +152,7 @@ impl<'ast> Display for PostfixOperator {
     }
 }
 
-impl<'ast> Display for BinaryOperator {
+impl Display for BinaryOperator {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         match self {
             Self::Add => write!(f, "+"),

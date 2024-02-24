@@ -113,7 +113,7 @@ impl<'ast> Display for Statement<'ast> {
                 write!(f, "if {} ", cond)?;
                 match then {
                     Self::Block(_) => {}
-                    _ => writeln!(f, "")?,
+                    _ => writeln!(f)?,
                 }
                 writeln!(f, "{}", then)?;
 

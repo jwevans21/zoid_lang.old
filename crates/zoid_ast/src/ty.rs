@@ -28,7 +28,7 @@ pub enum Type<'ast> {
     Void,
 }
 
-impl<'ast> Display for Type<'ast> {
+impl Display for Type<'_> {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         match self {
             Self::Pointer(inner) => write!(f, "*{}", inner),
