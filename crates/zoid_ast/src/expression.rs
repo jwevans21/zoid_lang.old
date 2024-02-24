@@ -28,6 +28,38 @@ pub enum Expression<'ast> {
     Cast(&'ast (&'ast Type<'ast>, &'ast Expression<'ast>)),
 }
 
+impl Expression<'_> {
+    pub fn pretty_print(&self) -> String {
+        match self {
+            Self::Variable(name) => name.to_string(),
+            Self::LiteralString(s) => format!("\"{}\"", s.escape_debug()),
+            Self::LiteralCString(s) => format!("c\"{}\"", s.escape_debug()),
+            Self::LiteralChar(c) => format!("'{}'", c.iter().collect::<String>()),
+            Self::LiteralInteger(i) => i.to_string(),
+            Self::LiteralFloat(l) => l.to_string(),
+            Self::LiteralBool(b) => b.to_string(),
+
+            Self::UnaryPrefix((op, expr)) => format!("{}{}", op, expr.pretty_print()),
+            Self::UnaryPostfix((op, expr)) => format!("{}.{}", expr.pretty_print(), op),
+            Self::Binary((op, lhs, rhs)) => format!("({} {} {})", lhs.pretty_print(), op, rhs.pretty_print()),
+
+            Self::Call((callee, args)) => {
+                format!(
+                    "{}({})",
+                    callee,
+                    args.iter()
+                        .map(|arg| format!("{}", arg.pretty_print()))
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                )
+            }
+            Self::Index((lhs, rhs)) => format!("{}[{}]", lhs, rhs),
+
+            Self::Cast((ty, expr)) => format!("({}:{})", expr, ty),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum PrefixOperator {
     Negate,
@@ -62,11 +94,12 @@ pub enum BinaryOperator {
     Ge,
     And,
     Or,
+    Assign
 }
 
 impl<'ast> Display for Expression<'ast> {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        match  self {
+        match self {
             Self::Variable(name) => write!(f, "{}", name),
             Self::LiteralString(s) => write!(f, "\"{}\"", s),
             Self::LiteralCString(s) => write!(f, "c\"{}\"", s),
@@ -80,7 +113,15 @@ impl<'ast> Display for Expression<'ast> {
             Self::Binary((op, lhs, rhs)) => write!(f, "({} {} {})", lhs, op, rhs),
 
             Self::Call((callee, args)) => {
-                write!(f, "{}({})", callee, args.iter().map(|arg| format!("{}", arg)).collect::<Vec<_>>().join(", "))
+                write!(
+                    f,
+                    "{}({})",
+                    callee,
+                    args.iter()
+                        .map(|arg| format!("{}", arg))
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                )
             }
             Self::Index((lhs, rhs)) => write!(f, "{}[{}]", lhs, rhs),
 
@@ -130,6 +171,7 @@ impl<'ast> Display for BinaryOperator {
             Self::Ge => write!(f, ">="),
             Self::And => write!(f, "and"),
             Self::Or => write!(f, "or"),
+            Self::Assign => write!(f, "="),
         }
     }
 }

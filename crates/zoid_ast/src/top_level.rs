@@ -5,7 +5,7 @@ use crate::{expression::Expression, statement::Statement, ty::Type};
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum TopLevel<'ast> {
     Import(&'ast str),
-    CImport(&'ast str),
+    ImportC(&'ast str),
 
     VariableDeclaration(&'ast (&'ast str, &'ast Expression<'ast>, Option<&'ast Type<'ast>>)),
 
@@ -15,16 +15,75 @@ pub enum TopLevel<'ast> {
             &'ast str,
             &'ast [(&'ast str, &'ast Type<'ast>)],
             &'ast Type<'ast>,
-            &'ast [Statement<'ast>],
+            &'ast [&'ast Statement<'ast>],
         ),
     ),
+}
+
+impl<'ast> TopLevel<'ast> {
+    pub fn pretty_print(&self, indent: usize) -> String {
+        match self {
+            Self::Import(path) => format!("{}import \"{}\";", " ".repeat(indent), path),
+            Self::ImportC(path) => format!("{}importc \"{}\";", " ".repeat(indent), path),
+            Self::VariableDeclaration((name, value, ty)) => {
+                format!(
+                    "{}let {}{} = {};",
+                    " ".repeat(indent),
+                    name,
+                    if let Some(ty) = ty {
+                        format!(": {}", ty)
+                    } else {
+                        String::new()
+                    },
+                    value
+                )
+            }
+            Self::ExternFunction((name, params, ret, variadic)) => {
+                format!(
+                    "{}extern fn {}({}): {};",
+                    " ".repeat(indent),
+                    name,
+                    {
+                        let mut p = params
+                            .iter()
+                            .map(|p| p.to_string())
+                            .collect::<Vec<_>>()
+                            .join(", ");
+                        if *variadic {
+                            p.push_str(", ...");
+                        }
+                        p
+                    },
+                    ret
+                )
+            }
+            Self::Function((name, params, ret, body)) => {
+                format!(
+                    "{}fn {}({}): {} {{\n{}\n{}}}",
+                    " ".repeat(indent),
+                    name,
+                    params
+                        .iter()
+                        .map(|(name, ty)| format!("{}: {}", name, ty))
+                        .collect::<Vec<_>>()
+                        .join(", "),
+                    ret,
+                    body.iter()
+                        .map(|stmt| stmt.pretty_print(indent + 4))
+                        .collect::<Vec<_>>()
+                        .join("\n"),
+                    " ".repeat(indent)
+                )
+            }
+        }
+    }
 }
 
 impl<'ast> Display for TopLevel<'ast> {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         match self {
             Self::Import(path) => write!(f, "import \"{}\";", path),
-            Self::CImport(path) => write!(f, "cimport \"{}\";", path),
+            Self::ImportC(path) => write!(f, "cimport \"{}\";", path),
             Self::VariableDeclaration((name, value, ty)) => {
                 write!(f, "let {}", name)?;
                 if let Some(ty) = ty {
@@ -43,7 +102,7 @@ impl<'ast> Display for TopLevel<'ast> {
                 if *variadic {
                     write!(f, ", ...")?;
                 }
-                write!(f, "): {}", ret)
+                write!(f, "): {};", ret)
             }
             Self::Function((name, params, ret, body)) => {
                 write!(f, "fn {}(", name)?;

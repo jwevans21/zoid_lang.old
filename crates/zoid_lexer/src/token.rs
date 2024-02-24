@@ -76,6 +76,11 @@ pub enum ZoidTokenKind {
     KWImport,
     KWImportC,
     KWExtern,
+    KWConst,
+    KWStatic,
+    KWType,
+    KWVolatile,
+
     BoolLitTrue,
     BoolLitFalse,
     StringLiteral,

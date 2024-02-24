@@ -1,4 +1,4 @@
-#![deny(missing_docs, missing_debug_implementations)]
+// #![deny(missing_docs, missing_debug_implementations)]
 
 //! # `zoid_lexer`
 //!
@@ -6,10 +6,9 @@
 
 use std::str::Chars;
 
-pub use token::ZoidToken;
 use zoid_location::ZoidLocation;
 
-use crate::token::ZoidTokenKind;
+pub use crate::token::{ZoidToken, ZoidTokenKind};
 
 #[cfg(test)]
 mod tests;
@@ -272,6 +271,10 @@ impl<'fname, 'source> ZoidLexer<'fname, 'source> {
             "import" => ZoidTokenKind::KWImport,
             "importc" => ZoidTokenKind::KWImportC,
             "extern" => ZoidTokenKind::KWExtern,
+            "const" => ZoidTokenKind::KWConst,
+            "static" => ZoidTokenKind::KWStatic,
+            "type" => ZoidTokenKind::KWType,
+            "volatile" => ZoidTokenKind::KWVolatile,
 
             "and" => ZoidTokenKind::OpAnd,
             "or" => ZoidTokenKind::OpOr,

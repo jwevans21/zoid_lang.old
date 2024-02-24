@@ -1,0 +1,11 @@
+[package]
+name = "zoid_parser"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bumpalo = { version = "3.15.1", features = ["allocator_api"] }
+hashbrown = "0.14.3"
+zoid_ast = { version = "0.1.0", path = "../zoid_ast" }
+zoid_lexer = { path = "../zoid_lexer" }
+zoid_location = { path = "../zoid_location" }

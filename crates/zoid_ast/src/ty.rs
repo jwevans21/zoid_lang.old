@@ -4,6 +4,8 @@ use std::fmt::{Display, Formatter, Result as FmtResult};
 pub enum Type<'ast> {
     Pointer(&'ast Type<'ast>),
     Function(&'ast (&'ast [&'ast Type<'ast>], &'ast Type<'ast>)),
+    Const(&'ast Type<'ast>),
+    Volatile(&'ast Type<'ast>),
 
     U8,
     U16,
@@ -40,6 +42,8 @@ impl<'ast> Display for Type<'ast> {
                     .join(", "),
                 ret
             ),
+            Self::Const(inner) => write!(f, "const {}", inner),
+            Self::Volatile(inner) => write!(f, "volatile {}", inner),
             Self::U8 => write!(f, "u8"),
             Self::U16 => write!(f, "u16"),
             Self::U32 => write!(f, "u32"),
