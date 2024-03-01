@@ -55,6 +55,10 @@ impl<'fname, 'source> ZoidLexer<'fname, 'source> {
         }
     }
 
+    pub fn location(&self) -> ZoidLocation<'fname> {
+        self.location
+    }
+
     /// Get the next token from the lexer
     ///
     /// If it finds a valid token then it will return `Ok(Some(token))`,

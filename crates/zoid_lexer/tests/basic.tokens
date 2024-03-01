@@ -87,7 +87,7 @@
             start: 30,
             end: 35,
         },
-        kind: Identifier,
+        kind: KWConst,
     },
     ZoidToken {
         location: ZoidLocation {

@@ -3,10 +3,11 @@ name = "zoid_lexer"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+authors = ["Jacob Evans <jacob@jwevans.dev>"]
 
 [dependencies]
 zoid_location = { path = "../zoid_location" }
 
 [dev-dependencies]
 expect-test = "1.4.1"
+

@@ -3,7 +3,10 @@ name = "zoidc"
 version = "0.1.0"
 edition = "2021"
 
+authors = ["Jacob Evans <jacob@jwevans.dev>"]
+
 [dependencies]
+anyhow = "1.0.80"
 bumpalo = "3.15.1"
 clap = { version = "4.5.1", features = ["derive", "wrap_help"] }
 

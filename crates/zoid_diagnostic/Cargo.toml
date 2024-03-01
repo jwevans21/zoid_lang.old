@@ -1,8 +1,9 @@
 [package]
-name = "zoid_location"
+name = "zoid_diagnostic"
 version = "0.1.0"
 edition = "2021"
 
 authors = ["Jacob Evans <jacob@jwevans.dev>"]
 
 [dependencies]
+zoid_location = { path = "../zoid_location" }
